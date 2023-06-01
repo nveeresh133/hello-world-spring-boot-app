@@ -81,7 +81,7 @@ pipeline {
  
 
                         // Deploy the registered revision with AppSpec file
-                        awsDeployDeploy(deploymentId: deployment.deploymentId, fileExistsBehavior: 'OVERWRITE', appSpecFile: 'dev/appspec.yml')
+                        awsDeployDeploy(deploymentId: deployment.deploymentId, fileExistsBehavior: 'OVERWRITE', appSpecFile: 'dev/appspec.yaml')
                     }
                 }
             } 
