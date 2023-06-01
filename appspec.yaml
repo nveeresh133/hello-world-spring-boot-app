@@ -1,0 +1,20 @@
+
+version: 0.0
+
+ 
+
+resources:
+
+  - TargetService:
+
+      Type: AWS::ECS::Service
+
+      Properties:
+
+        TaskDefinition: "arn:aws:ecs:us-east-2:823226410025:task-definition/service1:31"
+
+        LoadBalancerInfo:
+
+          ContainerName: "qt-container"
+
+          ContainerPort: 8080
