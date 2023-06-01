@@ -61,17 +61,29 @@ pipeline {
  }
  stage('Deploy to CodeDeploy') {
             steps {
-                // Deploy to AWS CodeDeploy
-                sh "awsCodeDeployDeployment(deploymentConfig: 'CodeDeployDefault.AllAtOnce', applicationName: 'dev-code-deploy', deploymentGroupName: 'dev-code-deploy-group', region: 'us-east-2', revision: [
-                    revisionType: 'S3',
-                    s3Location: [
-                        bucket: 'my-tf-test-bucket12344',
-                        bundleType: 'zip',
-                       // key: 'S3ObjectKey'
-			    "
-                    ]
-                ])
-            }
-        }	 
+                script {
+                    withAWS( region: 'us-east-2') {
+                        // Create a new AWS CodeDeploy deployment
+                        def deployment = awsDeployCreateDeployment(applicationName: 'dev-code-deploy', deploymentGroupName: 'dev-code-deploy-group')
+
+ 
+
+                        // Upload your application revision to S3
+                        def s3ObjectKey = "dev-app-${env.BUILD_NUMBER}.zip"
+                        def s3Bucket = 'my-tf-test-bucket12344'
+                        awsS3Upload(file: 'test/your-app.zip', bucket: s3Bucket, path: s3ObjectKey)
+
+ 
+
+                        // Register the uploaded revision with AWS CodeDeploy
+                        awsDeployRegisterRevision(applicationName: 'dev-code-deploy', s3Location: "${s3Bucket}/${s3ObjectKey}", deploymentGroupId: deployment.deploymentGroupId)
+
+ 
+
+                        // Deploy the registered revision with AppSpec file
+                        awsDeployDeploy(deploymentId: deployment.deploymentId, fileExistsBehavior: 'OVERWRITE', appSpecFile: 'dev/appspec.yml')
+                    }
+                }
+            } 
  }
 }
