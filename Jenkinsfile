@@ -31,15 +31,15 @@ pipeline {
   
  stage('Build'){
   			steps {
-		   		sh '''mvn install'''
+		   		sh '''mvn clean package'''
 			}
 		}
 
-		stage('Test'){
-			steps{
-				sh '''mvn test'''
-			}
-		}
+// 		stage('Test'){
+// 			steps{
+// 				sh '''mvn test'''
+// 			}
+// 		}
  
  // Building Docker images
  stage('Building image') {
