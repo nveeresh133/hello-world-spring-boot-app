@@ -59,7 +59,7 @@ pipeline {
  }
  }
  }
-stage('Deploy to CodeDeploy') {
+ stage('Deploy to CodeDeploy') {
             steps {
                 // Deploy to AWS CodeDeploy
                 awsCodeDeployDeployment(deploymentConfig: 'CodeDeployDefault.AllAtOnce', applicationName: 'dev-code-deploy', deploymentGroupName: 'dev-code-deploy-group', region: 'us-east-2', revision: [
@@ -67,7 +67,7 @@ stage('Deploy to CodeDeploy') {
                     s3Location: [
                         bucket: 'my-tf-test-bucket12344',
                         bundleType: 'zip',
-                        key: 'S3ObjectKey'
+                       // key: 'S3ObjectKey'
                     ]
                 ])
             }
