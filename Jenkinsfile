@@ -69,9 +69,9 @@ pipeline {
  
 
                         // Upload your application revision to S3
-//                         def s3ObjectKey = "dev-app-${env.BUILD_NUMBER}.zip"
-//                         def s3Bucket = 'my-tf-test-bucket12344'
-//                         awsS3Upload(file: 'test/your-app.zip', bucket: s3Bucket, path: s3ObjectKey)
+                        def s3ObjectKey = "dev-app-${env.BUILD_NUMBER}.zip"
+                        def s3Bucket = 'my-tf-test-bucket12344'
+                        awsS3Upload(file: 'dev-app-${env.BUILD_NUMBER}.zip', bucket: s3Bucket, path: s3ObjectKey)
 
  
 
