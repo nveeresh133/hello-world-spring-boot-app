@@ -71,6 +71,7 @@ pipeline {
                         // Upload your application revision to S3
                         def s3ObjectKey = "dev-app-${env.BUILD_NUMBER}.zip"
                         def s3Bucket = 'my-tf-test-bucket12344'
+		        def bundleType = 'zip'
                         awsS3Upload(file: 'dev-app-${env.BUILD_NUMBER}.zip', bucket: s3Bucket, path: s3ObjectKey)
 
  
@@ -81,7 +82,7 @@ pipeline {
  
 
                         // Deploy the registered revision with AppSpec file
-                        awsDeployDeploy(deploymentId: deployment.deploymentId, fileExistsBehavior: 'OVERWRITE', appSpecFile: 'dev/appspec.yaml')
+                        awsDeployDeploy(deploymentId: deployment.deploymentId, fileExistsBehavior: 'OVERWRITE', appSpecFile: 'appspec.yaml')
                     }
                 }
             } 
