@@ -72,8 +72,12 @@ stage('Upload to S3') {
  stage('Deploy to CodeDeploy') {
             steps {
                 script {
-                    sh "aws deploy create-deployment --application-name ${CODEDEPLOY_APPLICATION} --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --s3-location bucket=${S3_BUCKET},key=${S3_OBJECT_KEY},bundleType=zip --region ${AWS_DEFAULT_REGION}"
-                }
+//                     sh "aws deploy create-deployment --application-name ${CODEDEPLOY_APPLICATION} --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --s3-location bucket=${S3_BUCKET},key=${S3_OBJECT_KEY},bundleType=zip --region ${AWS_DEFAULT_REGION}"
+             sh '''aws deploy create-deployment \
+  --application-name your-codedeploy-application \
+  --deployment-group-name your-codedeploy-deployment-group \
+  --revision revisionType=AppSpecContent,appSpecContent="{\"version\": \"0.0\", \"resources\":[{\"TargetService\":\"qt-app_service\",\"Type\":\"AWS::ECS::Service\",\"Properties\":{\"TaskDefinition\":\"arn:aws:ecs:us-east-2:823226410025:task-definition/service1:32\",\"LoadBalancerInfo\":{\"TargetGroupPairInfoList\":[{\"ProdTrafficRoute\":{\"ListenerArns\":[\"arn:aws:elasticloadbalancing:us-east-2:823226410025:targetgroup/qt-app-blue/de1c38e2a31a07f5\"]},\"TestTrafficRoute\":{\"ListenerArns\":[\"arn:aws:elasticloadbalancing:us-east-2:823226410025:listener/app/qt-app-alb-dev/d955d2120a647fb7/5d2ed2de896384e4"]},\"TargetGroups\":[{\"Name\":\"arn:aws:elasticloadbalancing:us-east-2:823226410025:targetgroup/qt-app-blue/de1c38e2a31a07f5",\"ProdTrafficWeight\":100,\"TestTrafficWeight\":0},{\"Name\":\"your-green-target-group\",\"ProdTrafficWeight\":0,\"TestTrafficWeight\":100}]}}}]}}]"'''
+		}
             }
         }
  stage('Monitor Deployment') {
