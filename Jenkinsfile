@@ -76,6 +76,27 @@ stage('Upload to S3') {
                 }
             }
         }
-	 
+ stage('Monitor Deployment') {
+            steps {
+                script {
+                    def deploymentId = sh(script: "aws deploy list-deployments --application-name ${CODEDEPLOY_APPLICATION} --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --query 'deployments[0]' --output text --region ${AWS_DEFAULT_REGION}", returnStdout: true).trim()
+                    def deploymentStatus = 'InProgress'
+
+ 
+
+                    while (deploymentStatus == 'InProgress') {
+                        sleep(30)
+                        deploymentStatus = sh(script: "aws deploy get-deployment --deployment-id ${deploymentId} --query 'deploymentInfo.status' --output text --region ${AWS_DEFAULT_REGION}", returnStdout: true).trim()
+                    }
+
+ 
+
+                    if (deploymentStatus == 'Succeeded') {
+                        echo 'Deployment succeeded!'
+                    } else {
+                        error 'Deployment failed!'
+                    }
+                }
+            } 
 }
 }
