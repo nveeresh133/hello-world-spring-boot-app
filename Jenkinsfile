@@ -59,33 +59,33 @@ pipeline {
  }
  }
  }
- stage('Deploy to CodeDeploy') {
-            steps {
-                script {
-                    withAWS( region: 'us-east-2') {
-                        // Create a new AWS CodeDeploy deployment
-                        def deployment = awsDeployCreateDeployment(applicationName: 'dev-code-deploy', deploymentGroupName: 'dev-code-deploy-group')
+//  stage('Deploy to CodeDeploy') {
+//             steps {
+//                 script {
+//                     withAWS( region: 'us-east-2') {
+//                         // Create a new AWS CodeDeploy deployment
+//                         def deployment = awsDeployCreateDeployment(applicationName: 'dev-code-deploy', deploymentGroupName: 'dev-code-deploy-group')
 
  
 
-                        // Upload your application revision to S3
-                        def s3ObjectKey = "dev-app-${env.BUILD_NUMBER}.zip"
-                        def s3Bucket = 'my-tf-test-bucket12344'
-		        def bundleType = 'zip'
-                        awsS3Upload(file: 'dev-app-${env.BUILD_NUMBER}.zip', bucket: s3Bucket, path: s3ObjectKey)
+//                         // Upload your application revision to S3
+//                         def s3ObjectKey = "dev-app-${env.BUILD_NUMBER}.zip"
+//                         def s3Bucket = 'my-tf-test-bucket12344'
+// 		        def bundleType = 'zip'
+//                         awsS3Upload(file: 'dev-app-${env.BUILD_NUMBER}.zip', bucket: s3Bucket, path: s3ObjectKey)
 
  
 
-                        // Register the uploaded revision with AWS CodeDeploy
-                        awsDeployRegisterRevision(applicationName: 'dev-code-deploy', deploymentGroupId: deployment.deploymentGroupId)
+//                         // Register the uploaded revision with AWS CodeDeploy
+//                         awsDeployRegisterRevision(applicationName: 'dev-code-deploy', deploymentGroupId: deployment.deploymentGroupId)
 
  
 
-                        // Deploy the registered revision with AppSpec file
-                        awsDeployDeploy(deploymentId: deployment.deploymentId, fileExistsBehavior: 'OVERWRITE', appSpecFile: 'appspec.yaml')
-                    }
-                }
-            } 
- }
+//                         // Deploy the registered revision with AppSpec file
+//                         awsDeployDeploy(deploymentId: deployment.deploymentId, fileExistsBehavior: 'OVERWRITE', appSpecFile: 'appspec.yaml')
+//                     }
+//                 }
+//             } 
+//  }
 }
 }
