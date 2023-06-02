@@ -22,7 +22,7 @@ pipeline {
  S3_OBJECT_KEY = "myapp-${env.BUILD_NUMBER}.zip"
  CODEDEPLOY_APPLICATION = "dev-code-deploy"
  CODEDEPLOY_DEPLOYMENT_GROUP = "dev-code-deploy-group"
- deploymentConfigName = ""
+ deploymentConfigName = "params.deployment-config"
  }
  
  stages {
@@ -88,7 +88,7 @@ stage('Upload to S3') {
  stage('Deploy to CodeDeploy') {
             steps {
                 script {
-                    sh "aws deploy create-deployment --application-name ${CODEDEPLOY_APPLICATION} --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --deployment-config-name ${params.deployment-config} --s3-location bucket=${S3_BUCKET},key=${S3_OBJECT_KEY},bundleType=zip --region ${AWS_DEFAULT_REGION}"
+                    sh "aws deploy create-deployment --application-name ${CODEDEPLOY_APPLICATION} --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --deployment-config-name ${deploymentConfigName} --s3-location bucket=${S3_BUCKET},key=${S3_OBJECT_KEY},bundleType=zip --region ${AWS_DEFAULT_REGION}"
 		}
             }
         }
