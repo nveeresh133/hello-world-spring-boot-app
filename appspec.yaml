@@ -3,7 +3,7 @@ Resources:
   - TargetService:
       Type: AWS::ECS::Service
       Properties:
-        TaskDefinition: "arn:aws:ecs:us-east-2:823226410025:task-definition/service1:32"
+        TaskDefinition: "arn:aws:ecs:us-east-2:823226410025:task-definition/qt-app_service:32"
         LoadBalancerInfo:
           ContainerName: "qt-container"
           ContainerPort: 8080
