@@ -6,6 +6,10 @@ pipeline {
  IMAGE_REPO_NAME="spring-private"
  IMAGE_TAG="${BUILD_NUMBER}"
  REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
+ S3_BUCKET = "my-tf-test-bucket12344"
+ S3_OBJECT_KEY = "myapp-${env.BUILD_NUMBER}.zip"
+ CODEDEPLOY_APPLICATION = "dev-code-deploy"
+ CODEDEPLOY_DEPLOYMENT_GROUP = "dev-code-deploy-group"
  }
  
  stages {
@@ -32,8 +36,14 @@ pipeline {
  stage('Build'){
   			steps {
 		   		sh '''mvn clean package'''
+				sh 'zip -r myapp-${env.BUILD_NUMBER}.zip dev/appspec.yaml'
 			}
 		}
+stage('Upload to S3') {
+            steps {
+                sh "aws s3 cp myapp-${env.BUILD_NUMBER}.zip s3://${S3_BUCKET}/${S3_OBJECT_KEY}"
+            }
+        } 	 	
 
 // 		stage('Test'){
 // 			steps{
@@ -62,30 +72,10 @@ pipeline {
  stage('Deploy to CodeDeploy') {
             steps {
                 script {
-                    withAWS( region: 'us-east-2') {
-                        // Create a new AWS CodeDeploy deployment
-                        def deployment = awsDeployCreateDeployment(applicationName: 'dev-code-deploy', deploymentGroupName: 'dev-code-deploy-group')
-
- 
-
-                        // Upload your application revision to S3
-                        def s3ObjectKey = "dev-app-${env.BUILD_NUMBER}.zip"
-                        def s3Bucket = 'my-tf-test-bucket12344'
-		        def bundleType = 'zip'
-                        awsS3Upload(file: 'dev-app-${env.BUILD_NUMBER}.zip', bucket: s3Bucket, path: s3ObjectKey)
-
- 
-
-                        // Register the uploaded revision with AWS CodeDeploy
-                        awsDeployRegisterRevision(applicationName: 'dev-code-deploy', deploymentGroupId: deployment.deploymentGroupId)
-
- 
-
-                        // Deploy the registered revision with AppSpec file
-                        awsDeployDeploy(deploymentId: deployment.deploymentId, fileExistsBehavior: 'OVERWRITE', appSpecFile: 'appspec.yaml')
-                    }
+                    sh "aws deploy create-deployment --application-name ${CODEDEPLOY_APPLICATION} --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --s3-location bucket=${S3_BUCKET},key=${S3_OBJECT_KEY},bundleType=zip --region ${AWS_DEFAULT_REGION}"
                 }
-            } 
- }
+            }
+        }
+	 
 }
 }
