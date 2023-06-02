@@ -36,7 +36,7 @@ pipeline {
  stage('Build'){
   			steps {
 		   		sh '''mvn clean package'''
-				sh 'zip -r myapp-${env.BUILD_NUMBER}.zip dev/appspec.yaml'
+				sh 'zip -r myapp-${env.BUILD_NUMBER}.zip dev/*'
 			}
 		}
 stage('Upload to S3') {
