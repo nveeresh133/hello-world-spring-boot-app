@@ -1,5 +1,17 @@
 pipeline {
  agent any
+	parameters {
+        choice (name: 'Service', description: 'Service to build', 
+            choices: [
+            'frontend-service',
+            'backend-service'
+            ])
+//         booleanParam (defaultValue: false, description: 'Update ECS Service', name: 'Promote CD Deployment')
+        choice (name: 'deployment-config', description: 'Selecting the deployment configuration type', choices: [
+                "CodeDeployDefault.OneAtATime",
+                "CodeDeployDefault.HalfAtATime",
+                 "CodeDeployDefault.AllAtOnce",])
+        }
  environment {
  AWS_ACCOUNT_ID="823226410025"
  AWS_DEFAULT_REGION="us-east-2" 
@@ -10,6 +22,7 @@ pipeline {
  S3_OBJECT_KEY = "myapp-${env.BUILD_NUMBER}.zip"
  CODEDEPLOY_APPLICATION = "dev-code-deploy"
  CODEDEPLOY_DEPLOYMENT_GROUP = "dev-code-deploy-group"
+ deploymentConfigName = ""
  }
  
  stages {
@@ -75,7 +88,7 @@ stage('Upload to S3') {
  stage('Deploy to CodeDeploy') {
             steps {
                 script {
-                    sh "aws deploy create-deployment --application-name ${CODEDEPLOY_APPLICATION} --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --s3-location bucket=${S3_BUCKET},key=${S3_OBJECT_KEY},bundleType=zip --region ${AWS_DEFAULT_REGION}"
+                    sh "aws deploy create-deployment --application-name ${CODEDEPLOY_APPLICATION} --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --deployment-config-name ${deploymentConfigName} --s3-location bucket=${S3_BUCKET},key=${S3_OBJECT_KEY},bundleType=zip --region ${AWS_DEFAULT_REGION}"
 		}
             }
         }
