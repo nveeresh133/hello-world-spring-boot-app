@@ -24,7 +24,7 @@ pipeline {
  S3_OBJECT_KEY = "myapp-${env.BUILD_NUMBER}.zip"
  CODEDEPLOY_APPLICATION = "dev-code-deploy"
  CODEDEPLOY_DEPLOYMENT_GROUP = "dev-code-deploy-group"
- deploymentConfigName = "params.deployment-config"
+//  deploymentConfigName = "params.deployment-config"
  }
  
  stages {
