@@ -88,32 +88,12 @@ stage('Upload to S3') {
  stage('Deploy to CodeDeploy') {
             steps {
                 script {
+			sh "ws deploy update-deployment-group --application-name dev-code-deploy --current-deployment-group-name dev-code-deploy-group --deployment-config-name CodeDeployDefault.ECSLinear10PercentEvery1Minutes"
                     sh "aws deploy create-deployment --application-name ${CODEDEPLOY_APPLICATION} --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --s3-location bucket=${S3_BUCKET},key=${S3_OBJECT_KEY},bundleType=zip --region ${AWS_DEFAULT_REGION}"
 		}
             }
         }
- stage('Monitor Deployment') {
-            steps {
-                script {
-                    def deploymentId = sh(script: "aws deploy list-deployments --application-name ${CODEDEPLOY_APPLICATION} --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --query 'deployments[0]' --output text --region ${AWS_DEFAULT_REGION}", returnStdout: true).trim()
-                    def deploymentStatus = 'InProgress'
-
  
-
-                    while (deploymentStatus == 'InProgress') {
-                        sleep(30)
-                        deploymentStatus = sh(script: "aws deploy get-deployment --deployment-id ${deploymentId} --query 'deploymentInfo.status' --output text --region ${AWS_DEFAULT_REGION}", returnStdout: true).trim()
-                    }
-
- 
-
-                    if (deploymentStatus == 'Succeeded') {
-                        echo 'Deployment succeeded!'
-                    } else {
-                        error 'Deployment failed!'
-                    }
-                }
-            } 
 }
 }
 }
