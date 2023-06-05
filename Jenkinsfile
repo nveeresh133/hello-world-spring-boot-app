@@ -89,8 +89,8 @@ stage('Upload to S3') {
  }
  stage('Deploy to CodeDeploy') {
             steps {
-                script {
-			sh "aws deploy update-deployment-group --application-name ${CODEDEPLOY_APPLICATION} --current-deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --deployment-config-name ${params.deployment-config}"
+                script { 
+		    sh "aws deploy update-deployment-group --application-name ${CODEDEPLOY_APPLICATION} --current-deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --deployment-config-name ${params.deployment-config} --region ${AWS_DEFAULT_REGION}"
                     sh "aws deploy create-deployment --application-name ${CODEDEPLOY_APPLICATION} --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --s3-location bucket=${S3_BUCKET},key=${S3_OBJECT_KEY},bundleType=zip --region ${AWS_DEFAULT_REGION}"
 		}
             }
