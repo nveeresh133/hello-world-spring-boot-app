@@ -12,7 +12,7 @@ pipeline {
                 'CodeDeployDefault.ECSLinear10PercentEvery1Minutes',
                 'CodeDeployDefault.ECSLinear10PercentEvery3Minutes',
 		'CodeDeployDefault.ECSCanary10Percent5Minutes',
-		'CodeDeployDefault.ECSCanary10Percent15Minutes',])
+		'CodeDeployDefault.ECSCanary10Percent15Minutes'])
         }
  environment {
  AWS_ACCOUNT_ID="823226410025"
