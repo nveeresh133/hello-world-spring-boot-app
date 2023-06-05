@@ -8,9 +8,11 @@ pipeline {
             ])
 //         booleanParam (defaultValue: false, description: 'Update ECS Service', name: 'Promote CD Deployment')
         choice (name: 'deployment-config', description: 'Selecting the deployment configuration type', choices: [
-                "CodeDeployDefault.OneAtATime",
-                "CodeDeployDefault.HalfAtATime",
-                 "CodeDeployDefault.AllAtOnce",])
+                "CodeDeployDefault.ECSAllAtOnce",
+                "CodeDeployDefault.ECSLinear10PercentEvery1Minutes",
+                "CodeDeployDefault.ECSLinear10PercentEvery3Minutes",
+		"CodeDeployDefault.ECSCanary10Percent5Minutes",
+		"CodeDeployDefault.ECSCanary10Percent15Minutes",])
         }
  environment {
  AWS_ACCOUNT_ID="823226410025"
@@ -88,7 +90,7 @@ stage('Upload to S3') {
  stage('Deploy to CodeDeploy') {
             steps {
                 script {
-			sh "ws deploy update-deployment-group --application-name dev-code-deploy --current-deployment-group-name dev-code-deploy-group --deployment-config-name CodeDeployDefault.ECSLinear10PercentEvery1Minutes"
+			sh "ws deploy update-deployment-group --application-name ${CODEDEPLOY_APPLICATION} --current-deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --deployment-config-name ${params.deployment-config}"
                     sh "aws deploy create-deployment --application-name ${CODEDEPLOY_APPLICATION} --deployment-group-name ${CODEDEPLOY_DEPLOYMENT_GROUP} --s3-location bucket=${S3_BUCKET},key=${S3_OBJECT_KEY},bundleType=zip --region ${AWS_DEFAULT_REGION}"
 		}
             }
